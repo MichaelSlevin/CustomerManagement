@@ -133,5 +133,33 @@ namespace CustomerManagementTests.UnitTests.Controllers
             var result = (OkResult) await controller.SetPrimaryAddress(customerId, addressId);
             mockCustomerService.Verify(x => x.UpdatePrimaryAddressIfBelongsToCustomer(customerId, addressId), Times.Once);
         }
+
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task SetActiveStatus_changes_active_status_of_customer_and_returns_200(
+            Guid customerId,
+            bool status,
+            Mock<ICustomerService> mockCustomerService,
+            Mock<ICustomerRepository> mockCustomerRepo)
+        {
+            var controller = new CustomerController(mockCustomerService.Object, mockCustomerRepo.Object, _mockLogger.Object);
+            var result = (OkResult)await controller.SetActiveStatus(customerId, status);
+            mockCustomerRepo.Verify(x => x.SetActiveStatus(customerId, status), Times.Once);
+        }
+
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task GetActiveCustomers_Returns_customers_with_active_status(
+            Guid customerId,
+            bool status,
+            Mock<ICustomerService> mockCustomerService,
+            Mock<ICustomerRepository> mockCustomerRepo,
+            List<Customer> customers
+        ) {
+            mockCustomerRepo.Setup(x => x.GetActiveCustomers()).ReturnsAsync(customers);
+            var controller = new CustomerController(mockCustomerService.Object, mockCustomerRepo.Object, _mockLogger.Object);
+            var result = (OkObjectResult)await controller.GetActiveCustomers();
+            result.Value.Should().BeEquivalentTo(customers);
+        }
     }
 }

@@ -47,6 +47,22 @@ namespace CustomerManagement.Repositories
         {
             return await _context.Customers.AnyAsync(x => x.Id == customerId);
         }
+
+        public async Task SetActiveStatus(Guid customerId, bool active)
+        {
+            var customer = _context.Customers.FirstOrDefault(x => x.Id == customerId);
+            if (customer is not null)
+            {
+                customer.IsActive = active;
+                _context.Update(customer);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Customer>> GetActiveCustomers()
+        {
+            return await _context.Customers.Include("Addresses").Where(x => x.IsActive).ToListAsync();
+        }
     }
 
 }

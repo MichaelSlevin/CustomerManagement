@@ -66,5 +66,19 @@ namespace CustomerManagement.Controllers
             await _customerService.UpdatePrimaryAddressIfBelongsToCustomer(customerId, addressId);
             return Ok();
         }
+
+        [HttpPatch("{customerId:Guid}/active/{active:bool}")]
+        public async Task<IActionResult> SetActiveStatus(Guid customerId, bool active)
+        {
+            await _customerRepository.SetActiveStatus(customerId, active);
+            return Ok();
+        }
+
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveCustomers()
+        {
+            return Ok(await _customerRepository.GetActiveCustomers());
+        }
     }
 }

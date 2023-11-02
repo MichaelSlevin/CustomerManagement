@@ -10,5 +10,7 @@ namespace CustomerManagement.Repositories
         Task DeleteCustomer(Guid customerId);
         Task UpdateCustomer(Customer customer);
         Task<bool> DoesCustomerExist(Guid customerId);
+        Task SetActiveStatus(Guid customerId, bool active);
+        Task<IEnumerable<Customer>> GetActiveCustomers();
     }
 }

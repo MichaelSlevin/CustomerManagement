@@ -25,6 +25,8 @@ namespace CustomerManagement.Entities
 
         public Guid Id { get; set; }
 
+        public bool IsActive { get; set; }
+
         [Column(TypeName = "varchar(20)")]
         [Required]
         public string Title { get; set; }
