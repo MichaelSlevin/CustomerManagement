@@ -7,5 +7,6 @@ namespace CustomerManagement.Services
         Task<Customer> GetCustomerById(Guid id);
         Task DeleteCustomer(Guid id);
         Task<Customer> CreateCustomer(CreateCustomerDTO customer);
+        Task<bool> IsPrimaryAddress(Guid addressId);
     }
 }

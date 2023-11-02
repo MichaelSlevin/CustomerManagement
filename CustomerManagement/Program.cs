@@ -18,7 +18,6 @@ namespace CustomerManagement
 
             builder.Services.AddTransient<ICustomerService, CustomerService>();
             builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddTransient<IAddressService, AddressService>();
             builder.Services.AddTransient<IAddressRepository, AddressRepository>();
             builder.Services.AddDbContext<CustomerManagementDbContext>();
             var app = builder.Build();

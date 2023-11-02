@@ -62,5 +62,21 @@ namespace CustomerManagementTests.UnitTests.Services
             var customer = await service.CreateCustomer(createCustomerDTO);
             mockAddressRepo.Verify(x => x.CreateAddress(It.Is<Address>(x=> x.Id == customer.PrimaryAddressId && x.Country == "UK")), Times.Once);
         }
+
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task IsPrimaryAddress_Returns_true_if_the_address_is_a_Primary_address(Customer customer, Address address, CreateCustomerDTO createCustomerDTO, Mock<ICustomerRepository> mockCustomerRepo, Mock<IAddressRepository> mockAddressRepo)
+        {
+            customer.PrimaryAddressId = address.Id;
+            customer.Id = address.CustomerId;
+
+            mockCustomerRepo.Setup(x => x.GetCustomerById(customer.Id)).ReturnsAsync(customer);
+            mockAddressRepo.Setup(x => x.GetAddressById(address.Id)).Returns(address);
+
+
+            var service = new CustomerService(mockCustomerRepo.Object, mockAddressRepo.Object);
+            var response = await service.IsPrimaryAddress(address.Id);
+            response.Should().BeTrue();
+        }
     }
 }

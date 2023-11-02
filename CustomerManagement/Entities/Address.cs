@@ -13,7 +13,7 @@ namespace CustomerManagement.Entities
         {
         }
 
-        public Address(Customer customer, CreateAddressDTO createAddress)
+        public Address(Guid customerId, CreateAddressDTO createAddress)
         {
             Id = new Guid();
             Line1 = createAddress.Line1;
@@ -22,7 +22,7 @@ namespace CustomerManagement.Entities
             County = createAddress.County ?? "";
             Postcode = createAddress.Postcode;
             Country = createAddress.Country ?? "UK";
-            CustomerId = customer.Id;
+            CustomerId = customerId;
         }
 
         public Guid Id { get; set; }

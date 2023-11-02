@@ -42,6 +42,11 @@ namespace CustomerManagement.Repositories
             _context.Update(customer);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> DoesCustomerExist(Guid customerId)
+        {
+            return await _context.Customers.AnyAsync(x => x.Id == customerId);
+        }
     }
 
 }

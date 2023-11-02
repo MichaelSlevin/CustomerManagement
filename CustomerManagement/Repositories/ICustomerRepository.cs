@@ -9,5 +9,6 @@ namespace CustomerManagement.Repositories
         Task CreateCustomer(Customer customer);
         Task DeleteCustomer(Guid customerId);
         Task UpdateCustomer(Customer customer);
+        Task<bool> DoesCustomerExist(Guid customerId);
     }
 }

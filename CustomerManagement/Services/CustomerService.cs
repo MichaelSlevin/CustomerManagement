@@ -34,7 +34,7 @@ namespace CustomerManagement.Services
             };
             await _customerRepository.CreateCustomer(customer);
 
-            var address = new Address(customer, createCustomer.Address);
+            var address = new Address(id, createCustomer.Address);
             await _addressRepository.CreateAddress(address);
             customer.PrimaryAddressId = address.Id;
             await _customerRepository.UpdateCustomer(customer);
@@ -47,5 +47,11 @@ namespace CustomerManagement.Services
             await _customerRepository.DeleteCustomer(id);
         }
 
+        public async Task<bool> IsPrimaryAddress(Guid addressId)
+        {
+            var address = _addressRepository.GetAddressById(addressId);
+            var customer = await _customerRepository.GetCustomerById(address.CustomerId);
+            return customer.PrimaryAddressId == addressId;
+        }
     }
 }
