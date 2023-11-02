@@ -107,10 +107,10 @@ namespace CustomerManagementTests.UnitTests.Controllers
         [Test]
         [AutoDataNoRecursion]
         public async Task Delete_initiates_delete_process_and_returns_200(
-         Guid customerId, 
-         Mock<ICustomerService> mockCustomerService,
-         Mock<ICustomerRepository> mockCustomerRepo
-     )
+             Guid customerId, 
+             Mock<ICustomerService> mockCustomerService,
+             Mock<ICustomerRepository> mockCustomerRepo
+        )
         {
             var controller = new CustomerController(mockCustomerService.Object, mockCustomerRepo.Object, _mockLogger.Object);
 
@@ -120,6 +120,18 @@ namespace CustomerManagementTests.UnitTests.Controllers
             mockCustomerService.Verify(x=> x.DeleteCustomer(customerId), Times.Once());
         }
 
-
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task SetPrimaryAddress_initiates_Update_and_returns_200(
+             Guid customerId,
+             Guid addressId, 
+             Mock<ICustomerService> mockCustomerService,
+             Mock<ICustomerRepository> mockCustomerRepo)
+        {
+            
+            var controller = new CustomerController(mockCustomerService.Object, mockCustomerRepo.Object, _mockLogger.Object);
+            var result = (OkResult) await controller.SetPrimaryAddress(customerId, addressId);
+            mockCustomerService.Verify(x => x.UpdatePrimaryAddressIfBelongsToCustomer(customerId, addressId), Times.Once);
+        }
     }
 }

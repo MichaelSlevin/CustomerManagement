@@ -78,5 +78,33 @@ namespace CustomerManagementTests.UnitTests.Services
             var response = await service.IsPrimaryAddress(address.Id);
             response.Should().BeTrue();
         }
+
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task UpdatePrimaryAddressIfBelongsToCustomer_updates_the_primary_address_If_The_address_belongs_to_the_customer(Customer customer, Address address, CreateCustomerDTO createCustomerDTO, Mock<ICustomerRepository> mockCustomerRepo, Mock<IAddressRepository> mockAddressRepo)
+        {
+            address.CustomerId = customer.Id;
+
+            mockCustomerRepo.Setup(x => x.GetCustomerById(customer.Id)).ReturnsAsync(customer);
+            mockAddressRepo.Setup(x => x.GetAddressById(address.Id)).Returns(address);
+
+            var service = new CustomerService(mockCustomerRepo.Object, mockAddressRepo.Object);
+
+            await service.UpdatePrimaryAddressIfBelongsToCustomer(customer.Id, address.Id);
+            mockCustomerRepo.Verify(x => x.UpdateCustomer(It.Is<Customer>(x => x.PrimaryAddressId == address.Id)),Times.Once);
+        }
+
+        [Test]
+        [AutoDataNoRecursion]
+        public async Task UpdatePrimaryAddressIfBelongsToCustomer_does_not_update_the_primary_address_If_The_address_doesnt_belong_to_the_customer(Customer customer, Address address, CreateCustomerDTO createCustomerDTO, Mock<ICustomerRepository> mockCustomerRepo, Mock<IAddressRepository> mockAddressRepo)
+        {
+            mockCustomerRepo.Setup(x => x.GetCustomerById(customer.Id)).ReturnsAsync(customer);
+            mockAddressRepo.Setup(x => x.GetAddressById(address.Id)).Returns(address);
+
+            var service = new CustomerService(mockCustomerRepo.Object, mockAddressRepo.Object);
+
+            await service.UpdatePrimaryAddressIfBelongsToCustomer(customer.Id, address.Id);
+            mockCustomerRepo.Verify(x => x.UpdateCustomer(It.IsAny<Customer>()), Times.Never);
+        }
     }
 }

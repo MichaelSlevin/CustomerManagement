@@ -59,5 +59,12 @@ namespace CustomerManagement.Controllers
             await _customerService.DeleteCustomer(id);
             return Ok();
         }
+
+        [HttpPatch("{customerId}/primary-address/{addressId}")]
+        public async Task<IActionResult> SetPrimaryAddress(Guid customerId, Guid addressId)
+        {
+            await _customerService.UpdatePrimaryAddressIfBelongsToCustomer(customerId, addressId);
+            return Ok();
+        }
     }
 }

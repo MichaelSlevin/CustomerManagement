@@ -23,7 +23,7 @@ namespace CustomerManagement.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
             var address = _addressRepository.GetAddressById(id);
@@ -48,7 +48,7 @@ namespace CustomerManagement.Controllers
 
         }
 
-        [HttpDelete("{id")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if(await _customerService.IsPrimaryAddress(id))

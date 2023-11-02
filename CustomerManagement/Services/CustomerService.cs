@@ -53,5 +53,16 @@ namespace CustomerManagement.Services
             var customer = await _customerRepository.GetCustomerById(address.CustomerId);
             return customer.PrimaryAddressId == addressId;
         }
+
+        public async Task UpdatePrimaryAddressIfBelongsToCustomer(Guid customerId, Guid addressId)
+        {
+            var address = _addressRepository.GetAddressById(addressId);
+            if(address.CustomerId == customerId)
+            {
+                var customer = await _customerRepository.GetCustomerById(customerId);
+                customer.PrimaryAddressId = addressId;
+                await _customerRepository.UpdateCustomer(customer);
+            }
+        }
     }
 }
