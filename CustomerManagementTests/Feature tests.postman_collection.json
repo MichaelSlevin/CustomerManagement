@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "4bcf8141-4cae-4080-8700-1192572ae82c",
+		"name": "Feature tests",
+		"description": "# About this collection\n\nThis collection helps you set up contract tests to ensure that two separate systems are compatible and can communicate with one another.\n\n## **Using the collection**\n\n**Step 1:** Send the sample requests and view the response and test results.\n\n**Step 2:** Replace the sample request URLs with your desired API endpoints.\n\n**Step 3:** Customize the tests in the \"Tests\" tab if needed. Don't forget to save your changes.\n\n### Resources\n\n[Scripting in Postman](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)\n\n[Test script examples](https://learning.postman.com/docs/writing-scripts/script-references/test-examples/)\n\n[Postman Sandbox API reference](https://learning.postman.com/docs/sending-requests/grpc/postman-sandbox-api/#writing-assertions)\n\n[Using the Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/)\n\n[  \n](https://postman.postman.co/documentation/24552533-5bead607-0197-4e1d-87d4-3160bc7631c1?entity=&branch=&version=)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24580687"
+	},
+	"item": [
+		{
+			"name": "Getting customer that doesn't exist returns 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200",
+							"pm.test(\"Status code is 404 when customer does not exist\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"// // Validate that the response is json object",
+							"// pm.test(\"Response is a json object\", function () {",
+							"//     pm.expect(pm.response.json()).to.be.an('object');",
+							"// });",
+							"",
+							"// // Validate that the response has an arg object",
+							"// pm.test(\"Response to have 'arg' object\", function () {",
+							"//     pm.expect(pm.response.json()).to.have.property('args');",
+							"// });",
+							"",
+							"// // Validate that the response has headers object",
+							"// pm.test(\"Response to have 'headers' object\", function () {",
+							"//     pm.expect(pm.response.json()).to.have.property('headers');",
+							"// });",
+							"",
+							"// // Validate that the response has url property",
+							"// pm.test(\"Response to have 'url' property\", function () {",
+							"//     pm.expect(pm.response.json()).to.have.property('url');",
+							"// });",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var uuid = require('uuid');\r",
+							"var guid1 = uuid.v4();\r",
+							"pm.variables.set('customerId', guid1)\r",
+							"console.log(guid1)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}customers/{{customerId}}",
+					"host": [
+						"{{baseUrl}}customers"
+					],
+					"path": [
+						"{{customerId}}"
+					]
+				},
+				"description": "The tests in this request validate that:\n\n- the response code is 200\n- the response is a JSON object\n- the response has an 'arg' object\n- the response has 'headers' object\n- the response has a 'URL' property"
+			},
+			"response": []
+		},
+		{
+			"name": "Create a customer1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 when the customer is created\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"var responseData = pm.response.json();\r",
+							"pm.globals.set(\"Customer1Id\", responseData.id);\r",
+							"pm.globals.set(\"Customer1\", responseData);\r",
+							"\r",
+							"pm.globals.set(\"customer1_response_email\", responseData.email);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"customer1_title\", \"Mr\");\r",
+							"pm.globals.set(\"customer1_forename\", \"Michael\");\r",
+							"pm.globals.set(\"customer1_surname\", \"Slevin\");\r",
+							"pm.globals.set(\"customer1_email\", \"email_{{$timestamp}}@email.com\");\r",
+							"pm.globals.set(\"customer1_mobile\", \"07888888888\");\r",
+							"pm.globals.set(\"customer1_address_line1\", \"address1\");\r",
+							"pm.globals.set(\"customer1_address_line2\", \"address2\");\r",
+							"pm.globals.set(\"customer1_address_town\", \"town\");\r",
+							"pm.globals.set(\"customer1_address_postcode\", \"M1 1LL\");\r",
+							"pm.globals.set(\"customer1_address_county\", \"county\");\r",
+							"pm.globals.set(\"customer1_address_country\", \"country\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"{{customer1_title}}\",\r\n  \"forename\": \"{{customer1_forename}}\",\r\n  \"surname\": \"{{customer1_surname}}\",\r\n  \"email\": \"{{customer1_email}}\",\r\n  \"mobileNumber\": \"{{customer1_mobile}}\",\r\n  \"address\": {\r\n    \"line1\": \"{{customer1_address_line1}}\",\r\n    \"line2\": \"{{customer1_address_line2}}\",\r\n    \"town\": \"{{{{customer1_address_town}}\",\r\n    \"postcode\": \"{{customer1_address_postcode}}\",\r\n    \"county\": \"{{customer1_address_county}}\",\r\n    \"country\": \"{{customer1_address_country}}\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}customers",
+					"host": [
+						"{{baseUrl}}customers"
+					]
+				},
+				"description": "The tests in this request validate that the request body sent as form-data is valid."
+			},
+			"response": []
+		},
+		{
+			"name": "Customer1 created with correct details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 when the customer exists\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var responseData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Customer has correct data\", function() {\r",
+							"    pm.expect(responseData.addresses[0].postcode).to.eql(pm.globals.get(\"customer1_address_postcode\"));\r",
+							"    pm.expect(responseData.forename).to.eql(pm.globals.get(\"customer1_forename\"));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "customer1Id",
+						"value": "{{customer1Id}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Mr\",\r\n  \"forename\": \"Michael\",\r\n  \"surname\": \"Slevin\",\r\n  \"email\": \"email@email.com\",\r\n  \"mobileNumber\": \"07888888888\",\r\n  \"address\": {\r\n    \"line1\": \"address1\",\r\n    \"line2\": \"address2\",\r\n    \"town\": \"town\",\r\n    \"postcode\": \"M1 1LL\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}customers/{{Customer1Id}}",
+					"host": [
+						"{{baseUrl}}customers"
+					],
+					"path": [
+						"{{Customer1Id}}"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "{{customer1",
+							"disabled": true
+						}
+					]
+				},
+				"description": "The tests in this request validate that the request body sent as form-data is valid."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a customer2 (default country)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 when the customer is created\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var responseData = pm.response.json();\r",
+							"pm.globals.set(\"Customer2Id\", responseData.id);\r",
+							"\r",
+							"pm.test(\"Country defaults to UK\", function() {\r",
+							"    pm.expect(responseData.addresses[0].country).to.eql('UK');\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Mr\",\r\n  \"forename\": \"Michael\",\r\n  \"surname\": \"Slevin\",\r\n  \"email\": \"email{{$timestamp}}@email.com\",\r\n  \"mobileNumber\": \"07888888888\",\r\n  \"address\": {\r\n    \"line1\": \"address1\",\r\n    \"line2\": \"address2\",\r\n    \"town\": \"town\",\r\n    \"postcode\": \"M1 1LL\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}customers",
+					"host": [
+						"{{baseUrl}}customers"
+					]
+				},
+				"description": "The tests in this request validate that the request body sent as form-data is valid."
+			},
+			"response": []
+		},
+		{
+			"name": "Create customer3 (allow nullable fields)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 when the customer is created\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var responseData = pm.response.json();\r",
+							"pm.globals.set(\"Customer3Id\", responseData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Mr\",\r\n  \"forename\": \"Michael\",\r\n  \"surname\": \"Slevin\",\r\n  \"email\": \"email{{$timestamp}}_3@email.com\",\r\n  \"mobileNumber\": \"07888888888\",\r\n  \"address\": {\r\n    \"line1\": \"address1\",\r\n    \"line2\": \"address2\",\r\n    \"town\": \"town\",\r\n    \"postcode\": \"M1 1LL\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}customers",
+					"host": [
+						"{{baseUrl}}customers"
+					]
+				},
+				"description": "The tests in this request validate that the request body sent as form-data is valid."
+			},
+			"response": []
+		},
+		{
+			"name": "A customer can only exist once in the database",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400 when a customer with the same email exists\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Mr\",\r\n  \"forename\": \"Michael\",\r\n  \"surname\": \"Slevin\",\r\n  \"email\": \"{{customer1_response_email}}\",\r\n  \"mobileNumber\": \"07888888888\",\r\n  \"address\": {\r\n    \"line1\": \"address1\",\r\n    \"line2\": \"address2\",\r\n    \"town\": \"town\",\r\n    \"postcode\": \"M1 1LL\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}customers",
+					"host": [
+						"{{baseUrl}}customers"
+					]
+				},
+				"description": "The tests in this request validate that the request body sent as form-data is valid."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7292/"
+		}
+	]
+}
